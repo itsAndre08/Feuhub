@@ -4,6 +4,8 @@ let books = JSON.parse(localStorage.getItem('books')) || [
     // Add other book entries as needed
 ];
 
+let deletedBooks = JSON.parse(localStorage.getItem('deletedBooks')) || [];
+
 function addBook() {
     // Get form values
     const title = document.getElementById('title').value;
@@ -15,7 +17,7 @@ function addBook() {
 
     // Create new book object
     const newBook = {
-        bookId: books.length + 1,
+        bookId: books.length > 0 ? books[books.length - 1].bookId + 1 : 1,
         title: title,
         author: author,
         genre: genre,
@@ -66,11 +68,29 @@ function deleteBook(bookId) {
     // Find the index of the book to be deleted
     const index = books.findIndex(book => book.bookId === bookId);
 
-    // Remove the book from the array
-    books.splice(index, 1);
+    // Remove the book from the array and move it to deletedBooks
+    const deletedBook = books.splice(index, 1)[0];
+    deletedBooks.push(deletedBook);
 
     // Update local storage
     localStorage.setItem('books', JSON.stringify(books));
+    localStorage.setItem('deletedBooks', JSON.stringify(deletedBooks));
+
+    // Update the book list
+    updateBookList();
+}
+
+function recoverBook(bookId) {
+    // Find the index of the book to be recovered
+    const index = deletedBooks.findIndex(book => book.bookId === bookId);
+
+    // Remove the book from deletedBooks and move it back to books
+    const recoveredBook = deletedBooks.splice(index, 1)[0];
+    books.push(recoveredBook);
+
+    // Update local storage
+    localStorage.setItem('books', JSON.stringify(books));
+    localStorage.setItem('deletedBooks', JSON.stringify(deletedBooks));
 
     // Update the book list
     updateBookList();
