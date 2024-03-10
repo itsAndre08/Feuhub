@@ -1,3 +1,22 @@
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+//  user: "yourusername",
+//  password: "yourpassword",
+  database: "books"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+  var sql = "INSERT INTO books (Title, Author, Genre, Publication_Year, ISBN, Quantity_Available) VALUES (title, author, genre, publicationYear, isbn, quantityAvailable)";
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+});
+
 // Load books from local storage or use dummy data
 let books = JSON.parse(localStorage.getItem('books')) || [
     { bookId: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction', publicationYear: 1925, isbn: '9781234567890', quantityAvailable: 5, borrowers: [] },
